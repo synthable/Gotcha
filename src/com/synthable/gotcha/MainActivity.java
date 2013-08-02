@@ -41,6 +41,15 @@ public class MainActivity extends FragmentActivity implements
 	private GoogleMap mMap;
 	private int mMarkerCounter;
 
+	static private class Colors {
+		static protected int TRANS_RED = 1358888960;
+		static protected int TRANS_BLUE = 1342177535;
+		static protected int TRANS_GREEN = 1342242560;
+		static protected int TRANS_YELLOW = 1358954240;
+		static protected int TRANS_BLACK = 1342177280;
+		static protected int TRANS_PURPLE = 1358889215;
+	}
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,7 +107,7 @@ public class MainActivity extends FragmentActivity implements
 	        .center(point)
 	        .radius(100)
 	        .strokeWidth(2)
-	        .fillColor(Color.BLUE)
+	        .fillColor(Colors.TRANS_BLUE)
         );
 
         CameraUpdate cameraUpdate = CameraUpdateFactory.newLatLngZoom(point, 15);
@@ -118,7 +127,7 @@ public class MainActivity extends FragmentActivity implements
 		        .center(point)
 		        .radius(25)
 		        .strokeWidth(2)
-		        .fillColor(Color.RED)
+		        .fillColor(Colors.TRANS_RED)
 			);
 		}
 	}
@@ -131,7 +140,7 @@ public class MainActivity extends FragmentActivity implements
 		        .center(point)
 		        .radius(10)
 		        .strokeWidth(2)
-		        .fillColor(Color.YELLOW)
+		        .fillColor(Colors.TRANS_YELLOW)
 			);
 		}
 	}
