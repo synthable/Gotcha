@@ -1,5 +1,7 @@
 package com.synthable.gotcha;
 
+import android.app.PendingIntent;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
@@ -11,6 +13,7 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
+import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.LocationClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
@@ -35,12 +38,28 @@ public class MainActivity extends FragmentActivity implements
     private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
 
+    private static final long SECONDS_PER_HOUR = 60;
+    private static final long GEOFENCE_EXPIRATION_IN_HOURS = 12;
+    private static final long GEOFENCE_EXPIRATION_TIME =
+            GEOFENCE_EXPIRATION_IN_HOURS *
+            SECONDS_PER_HOUR *
+            MILLISECONDS_PER_SECOND;
+
 	private LocationRequest mLocationRequest;
 	private LocationClient mLocationClient;
 	private Location mCurrentLocation;
 	private GoogleMap mMap;
 	private int mMarkerCounter;
 
+	/*
+     * Create a PendingIntent that triggers an IntentService in your
+     * app when a geofence transition occurs.
+     */
+    private PendingIntent getTransitionPendingIntent() {
+        Intent intent = new Intent(this, ReceiveTransitionsIntentService.class);
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -120,6 +139,17 @@ public class MainActivity extends FragmentActivity implements
 		        .strokeWidth(2)
 		        .fillColor(Color.RED)
 			);
+			
+			Geofence geofence = new Geofence.Builder()
+	            .setRequestId("1")
+	            .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER)
+	            .setCircularRegion(
+	            	point.latitude,
+	            	point.longitude,
+	                25
+	            )
+	            .setExpirationDuration(GEOFENCE_EXPIRATION_TIME)
+	            .build();
 		}
 	}
 
