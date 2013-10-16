@@ -1,5 +1,7 @@
 package com.synthable.gotcha;
 
+import android.accounts.AccountManager;
+import android.content.Intent;
 import android.content.IntentSender;
 import android.graphics.Color;
 import android.location.Location;
@@ -8,6 +10,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.widget.Toast;
 
+import com.google.android.gms.common.AccountPicker;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesClient.ConnectionCallbacks;
 import com.google.android.gms.common.GooglePlayServicesClient.OnConnectionFailedListener;
@@ -34,6 +37,8 @@ public class MainActivity extends FragmentActivity implements
     private static final int FASTEST_INTERVAL_IN_SECONDS = 2;
     private static final long FASTEST_INTERVAL = MILLISECONDS_PER_SECOND * FASTEST_INTERVAL_IN_SECONDS;
     private static final int CONNECTION_FAILURE_RESOLUTION_REQUEST = 9000;
+    
+    public static final int SELECT_ACCOUNT = 100;
 
 	private LocationRequest mLocationRequest;
 	private LocationClient mLocationClient;
@@ -61,6 +66,9 @@ public class MainActivity extends FragmentActivity implements
         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
         mLocationRequest.setInterval(UPDATE_INTERVAL);
         mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        Intent intent = AccountPicker.newChooseAccountIntent(null, null, new String[]{"com.google"}, false, null, null, null, null);
+		startActivityForResult(intent, SELECT_ACCOUNT);
     }
 
     @Override
@@ -81,6 +89,15 @@ public class MainActivity extends FragmentActivity implements
     	mLocationClient.disconnect();
 
 		super.onStop();
+	}
+
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		if(requestCode == SELECT_ACCOUNT && resultCode == RESULT_OK) {
+			String accountName = data.getStringExtra(AccountManager.KEY_ACCOUNT_NAME);
+			Toast.makeText(this, accountName, Toast.LENGTH_SHORT).show();
+		}
+		super.onActivityResult(requestCode, resultCode, data);
 	}
 
     @Override
